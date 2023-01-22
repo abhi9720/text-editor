@@ -76,6 +76,7 @@ const TextEditor = () => {
     const encodedText = encodeURIComponent(text);
     const shareUrl = `whatsapp://send?text=${encodedText}`;
     window.open(shareUrl, "_blank");
+
   }
 
 
