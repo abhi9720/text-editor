@@ -10,7 +10,11 @@ import ContentPasteIcon from '@mui/icons-material/ContentPaste';
 import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
 import ContentCopyIcon from '@mui/icons-material/ContentCopy';
 import CloudUploadIcon from '@mui/icons-material/CloudUpload';
-import { Button, FormControlLabel, FormGroup, Switch } from '@mui/material';
+import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
+import { FormControlLabel, FormGroup, Switch } from '@mui/material';
+import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
+import LocalPrintshopIcon from '@mui/icons-material/LocalPrintshop';
+
 const TextEditor = () => {
   const [text, setText] = useState('');
   const [font, setFont] = useState('Arial');
@@ -19,8 +23,10 @@ const TextEditor = () => {
   const [letterCount, setLetterCount] = useState(0);
   const [lineCount, setLineCount] = useState(0);
   const [isWhite, setIsWhite] = useState(false);
+  const [togglenav, setToggleNav] = useState(false);
   const fileInputRef = useRef(null);
 
+  const printRef = useRef(null);
   useEffect(() => {
     const countWords = () => {
       let words = text.trim().split(/\s+/);
@@ -56,7 +62,9 @@ const TextEditor = () => {
 
   }, []);
 
-
+  window.addEventListener('file', (event) => {
+    console.log(event)
+  });
 
 
   const handleDownload = () => {
@@ -102,6 +110,7 @@ const TextEditor = () => {
     localStorage.setItem("userfontsize", Math.max(fontSize - 1, 12))
   }
   const handleClear = () => {
+    localStorage.setItem("text", '')
     setText('');
   }
 
@@ -118,46 +127,72 @@ const TextEditor = () => {
     reader.readAsText(file);
   }
 
+  const handlePrint = () => {
+    printRef.current.innerHTML = text;
+    window.print();
+  }
+
 
   return (
     <div className="text-editor"
-      style={{ backgroundColor: `#${isWhite ? 'd9e3ffc7' : 'dca380a8'}` }}
+      style={{ backgroundColor: `#${isWhite ? 'd9e3ffc7' : 'ff86005a'}` }}
     >
       <div className="header"
-        style={{ borderBottom: `2px solid #${isWhite ? '0012ff' : 'd0a090'}` }}>
-
+        style={{ borderBottom: `2px solid #${isWhite ? '0466c8b5' : 'd0a090'}` }}>
+        <img src="../Icon-notepad.png" alt="Logo" className="logo" />
         <div className='actiontbtn'>
-
-          <img src="../Icon-notepad.png" alt="Logo" className="logo" />
-          <Button onClick={handleCopy} tile="Copy">
+          <IconButton onClick={handleCopy} tile="Copy">
             <ContentCopyIcon />
-            <label className='hidetext' > Copy</label>
-          </Button>
-          <Button onClick={handlePaste} title="Paste"><ContentPasteIcon />
-            <label className='hidetext' > Paste</label>
-          </Button>
-          <Button onClick={handleClear} title="Clear Screen">
-            <DeleteOutlineIcon />
-            <label className='hidetext'> Clear</label>
-          </Button>
-          <Button onClick={handleShare} title="Share on WhatsApp">
-            <WhatsAppIcon />
-            <label className='hidetext' > Share</label>
-          </Button>
-          <Button onClick={handleDownload} title="Save file">
-            <SaveIcon />
-            <label className='hidetext' > Download</label>
-          </Button>
 
+          </IconButton>
+          <IconButton onClick={handlePaste} title="Paste"><ContentPasteIcon />
+
+          </IconButton>
+          <IconButton onClick={handleClear} title="Clear Screen">
+            <DeleteOutlineIcon />
+
+          </IconButton>
+          <IconButton onClick={handleShare} title="Share on WhatsApp">
+            <WhatsAppIcon />
+
+          </IconButton>
+          <IconButton onClick={handleDownload} title="Save file">
+            <SaveIcon />
+
+          </IconButton>
+          <IconButton onClick={() => fileInputRef.current.click()} title="Upload File">
+            <CloudUploadIcon />
+
+          </IconButton>
 
           <input type="file" ref={fileInputRef} style={{ display: 'none' }} onChange={handleFileInput} />
+          {
+            togglenav ?
+              <IconButton className='showonsmall' onClick={e => setToggleNav(!togglenav)}>
+                <KeyboardArrowDownIcon className='showonsmall' />
+              </IconButton> : <></>
+          }
+
 
         </div>
-        <div className='fontaction'>
-          <Button onClick={() => fileInputRef.current.click()} title="Upload File">
-            <CloudUploadIcon />
-            <label className='hidetext' htmlFor="Upload Icon"> Upload File</label>
-          </Button>
+        {togglenav ? <></> : <div className='fontaction'>
+          <IconButton onClick={handlePrint}>
+            <LocalPrintshopIcon></LocalPrintshopIcon>
+          </IconButton>
+
+          <IconButton onClick={incrementFontSize} title="incrementFontSize" aria-label="incrementFontSize">
+            <ZoomInIcon fontSize="large" />
+          </IconButton>
+
+          <IconButton onClick={decrementFontSize} title="decrementFontSize" aria-label="decrementFontSize" >
+            <ZoomOutIcon fontSize="large" />
+          </IconButton>
+          <p className='fontsizedisplay' title='font-size'>
+
+            <span className='hidetext'> Font Size</span>
+            {` ${fontSize}`}
+          </p>
+
           <select value={font} onChange={handleFontChange}>
             <option value="Arial">Arial</option>
             <option value="Helvetica">Helvetica</option>
@@ -170,32 +205,33 @@ const TextEditor = () => {
             <option value="Poppins">Poppins</option>
           </select>
 
-          <p className='fontsizedisplay' title='font-size'>
-            <span className='hidetext'> Font Size</span>
-            {` ${fontSize}`}
-          </p>
-          <IconButton onClick={incrementFontSize} title="incrementFontSize" aria-label="incrementFontSize">
-            <ZoomInIcon fontSize="large" />
+
+
+          <IconButton className='showonsmall' onClick={e => setToggleNav(!togglenav)}>
+            <KeyboardArrowUpIcon className='showonsmall' />
           </IconButton>
 
-          <IconButton onClick={decrementFontSize} title="decrementFontSize" aria-label="decrementFontSize" >
-            <ZoomOutIcon fontSize="large" />
-          </IconButton>
 
-        </div>
+        </div>}
+
       </div>
-      <textarea className={isWhite ? 'notebook-page-white' : 'notebook-page-yellow'} value={text} onChange={e => {
+      <textarea id="notepadtextbox" className={isWhite ? 'notebook-page-white' : 'notebook-page-yellow'} value={text} onChange={e => {
         setText(e.target.value);
         localStorage.setItem('text', e.target.value);
       }} style={{ fontFamily: font, fontSize: `${fontSize}px` }} />
 
+
+      <div ref={printRef} className="print-only" style={{ display: 'none' }}>
+      </div>
       <div className='counts'>
+
         <div>
-          <p className="line-count">Line: {lineCount}</p>
-          <p className="word-count">Word: {wordCount} ,</p>
+          <p className="line-count">Line  {lineCount} </p>
+          <p className="word-count">Word: {wordCount} </p>
           <p className="letter-count">Chars: {letterCount}</p>
+
         </div>
-        <FormGroup style={{ marginRight: '20px' }}>
+        <FormGroup >
           <FormControlLabel control={<Switch
             checked={isWhite}
             onChange={e => {

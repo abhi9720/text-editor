@@ -1,6 +1,19 @@
 {
   "short_name": "Note Pad",
   "name": "Note Pad",
+  "file_handlers": [
+    {
+      "action": "open-within-app",
+      "accept": [
+        {
+          "mime": "text/plain",
+          "extensions": [
+            "txt"
+          ]
+        }
+      ]
+    }
+  ],
   "icons": [
     {
       "src": "./Icon-notepad.png",
