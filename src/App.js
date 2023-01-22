@@ -1,7 +1,15 @@
 import React, { useEffect, useState } from 'react';
 import './App.css'; // import the CSS file
 
-
+import ZoomOutIcon from '@mui/icons-material/ZoomOut';
+import ZoomInIcon from '@mui/icons-material/ZoomIn';
+import IconButton from '@mui/material/IconButton';
+import DownloadForOfflineIcon from '@mui/icons-material/DownloadForOffline';
+import WhatsAppIcon from '@mui/icons-material/WhatsApp';
+import ContentPasteIcon from '@mui/icons-material/ContentPaste';
+import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
+import ContentCopyIcon from '@mui/icons-material/ContentCopy';
+import { Button } from '@mui/material';
 const TextEditor = () => {
   const [text, setText] = useState('');
   const [font, setFont] = useState('Arial');
@@ -62,10 +70,7 @@ const TextEditor = () => {
     setFont(e.target.value);
   }
 
-  const handleFontSizeChange = (e) => {
-    console.log(e)
-    setFontSize(e.target.value);
-  }
+
 
   const handleShare = () => {
     const encodedText = encodeURIComponent(text);
@@ -73,21 +78,32 @@ const TextEditor = () => {
     window.open(shareUrl, "_blank");
   }
 
+
+  const incrementFontSize = () => {
+    setFontSize(Math.min(fontSize + 1, 24));
+  }
+  const decrementFontSize = () => {
+    setFontSize(Math.max(fontSize - 1, 12));
+  }
   const handleClear = () => {
     setText('');
   }
   return (
     <div className="text-editor">
       <div className="header">
-        <img src="https://w7.pngwing.com/pngs/994/388/png-transparent-computer-icons-editing-font-awesome-graphics-editor-advertising-angle-text-logo.png" alt="Logo" className="logo" />
 
-        <button onClick={handleCopy}>Copy</button>
-        <button onClick={handlePaste}>Paste</button>
-        <button onClick={handleClear}>Clear</button>
-        <button onClick={handleShare}>Share on WhatsApp</button>
-        <button onClick={handleDownload}>Download</button>
-        <div>
-          <label>Font:</label>
+        <div className='actiontbtn'>
+
+          <img src="../Icon-notepad.png" alt="Logo" className="logo" />
+          <Button onClick={handleCopy} tile="Copy"><ContentCopyIcon /> </Button>
+          <Button onClick={handlePaste} title="Paste"><ContentPasteIcon /> </Button>
+          <Button onClick={handleClear} title="Clear Screen"><DeleteOutlineIcon /> </Button>
+          <Button onClick={handleShare} title="Share on WhatsApp"> <WhatsAppIcon /> </Button>
+          <Button onClick={handleDownload} title="Download file"><DownloadForOfflineIcon /> </Button>
+
+        </div>
+        <div className='fontaction'>
+
           <select value={font} onChange={handleFontChange}>
             <option value="Arial">Arial</option>
             <option value="Helvetica">Helvetica</option>
@@ -96,8 +112,18 @@ const TextEditor = () => {
             <option value="sans-serif">sans-serif</option>
             <option value="cursive">cursive</option>
           </select>
-          <label>Font Size:</label>
-          <input type="number" value={fontSize} onChange={handleFontSizeChange} min="12" max="24" step="2" />
+
+          <p className='fontsizedisplay'>
+            {fontSize}
+          </p>
+          <IconButton onClick={incrementFontSize} title="incrementFontSize" aria-label="incrementFontSize">
+            <ZoomInIcon fontSize="large" />
+          </IconButton>
+
+          <IconButton onClick={decrementFontSize} title="decrementFontSize" aria-label="decrementFontSize" >
+            <ZoomOutIcon fontSize="large" />
+          </IconButton>
+
         </div>
       </div>
       <textarea className="notebook-page" value={text} onChange={e => {
