@@ -1,14 +1,15 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import './App.css'; // import the CSS file
 
 import ZoomOutIcon from '@mui/icons-material/ZoomOut';
 import ZoomInIcon from '@mui/icons-material/ZoomIn';
 import IconButton from '@mui/material/IconButton';
-import DownloadForOfflineIcon from '@mui/icons-material/DownloadForOffline';
+import SaveIcon from '@mui/icons-material/Save';
 import WhatsAppIcon from '@mui/icons-material/WhatsApp';
 import ContentPasteIcon from '@mui/icons-material/ContentPaste';
 import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
 import ContentCopyIcon from '@mui/icons-material/ContentCopy';
+import CloudUploadIcon from '@mui/icons-material/CloudUpload';
 import { Button, FormControlLabel, FormGroup, Switch } from '@mui/material';
 const TextEditor = () => {
   const [text, setText] = useState('');
@@ -18,6 +19,7 @@ const TextEditor = () => {
   const [letterCount, setLetterCount] = useState(0);
   const [lineCount, setLineCount] = useState(0);
   const [isWhite, setIsWhite] = useState(false);
+  const fileInputRef = useRef(null);
 
   useEffect(() => {
     const countWords = () => {
@@ -102,6 +104,21 @@ const TextEditor = () => {
   const handleClear = () => {
     setText('');
   }
+
+  function handleFileInput(event) {
+    const file = event.target.files[0];
+    readFile(file);
+  }
+  function readFile(file) {
+    const reader = new FileReader();
+    reader.onload = (event) => {
+      const fileText = event.target.result;
+      setText(fileText);
+    }
+    reader.readAsText(file);
+  }
+
+
   return (
     <div className="text-editor"
       style={{ backgroundColor: `#${isWhite ? 'd9e3ffc7' : 'dca380a8'}` }}
@@ -114,27 +131,33 @@ const TextEditor = () => {
           <img src="../Icon-notepad.png" alt="Logo" className="logo" />
           <Button onClick={handleCopy} tile="Copy">
             <ContentCopyIcon />
-            <label className='hidetext' htmlFor="Copy Icon"> Copy</label>
+            <label className='hidetext' > Copy</label>
           </Button>
           <Button onClick={handlePaste} title="Paste"><ContentPasteIcon />
-            <label className='hidetext' htmlFor="Paste Icon"> Paste</label>
+            <label className='hidetext' > Paste</label>
           </Button>
           <Button onClick={handleClear} title="Clear Screen">
             <DeleteOutlineIcon />
-            <label className='hidetext' htmlFor="Clear Icon"> Clear</label>
+            <label className='hidetext'> Clear</label>
           </Button>
           <Button onClick={handleShare} title="Share on WhatsApp">
             <WhatsAppIcon />
-            <label className='hidetext' htmlFor="Share Icon"> Share</label>
+            <label className='hidetext' > Share</label>
           </Button>
-          <Button onClick={handleDownload} title="Download file">
-            <DownloadForOfflineIcon />
-            <label className='hidetext' htmlFor="Download Icon"> Download</label>
+          <Button onClick={handleDownload} title="Save file">
+            <SaveIcon />
+            <label className='hidetext' > Download</label>
           </Button>
+
+
+          <input type="file" ref={fileInputRef} style={{ display: 'none' }} onChange={handleFileInput} />
 
         </div>
         <div className='fontaction'>
-
+          <Button onClick={() => fileInputRef.current.click()} title="Upload File">
+            <CloudUploadIcon />
+            <label className='hidetext' htmlFor="Upload Icon"> Upload File</label>
+          </Button>
           <select value={font} onChange={handleFontChange}>
             <option value="Arial">Arial</option>
             <option value="Helvetica">Helvetica</option>
@@ -147,8 +170,8 @@ const TextEditor = () => {
             <option value="Poppins">Poppins</option>
           </select>
 
-          <p className='fontsizedisplay'>
-            Font Size :
+          <p className='fontsizedisplay' title='font-size'>
+            <span className='hidetext'> Font Size</span>
             {` ${fontSize}`}
           </p>
           <IconButton onClick={incrementFontSize} title="incrementFontSize" aria-label="incrementFontSize">

@@ -79,11 +79,19 @@ button {
   margin-bottom: 5px;
 }
 
+label {
+  cursor: pointer;
+}
+
+
+
 .fontsizedisplay {
   padding: 5px 10px;
   border-radius: 3px;
   margin-right: 10px;
   background-color: white;
+
+
 
 }
 
