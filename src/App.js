@@ -9,7 +9,7 @@ import WhatsAppIcon from '@mui/icons-material/WhatsApp';
 import ContentPasteIcon from '@mui/icons-material/ContentPaste';
 import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
 import ContentCopyIcon from '@mui/icons-material/ContentCopy';
-import { Button } from '@mui/material';
+import { Button, FormControlLabel, FormGroup, Switch } from '@mui/material';
 const TextEditor = () => {
   const [text, setText] = useState('');
   const [font, setFont] = useState('Arial');
@@ -17,6 +17,7 @@ const TextEditor = () => {
   const [wordCount, setWordCount] = useState(0);
   const [letterCount, setLetterCount] = useState(0);
   const [lineCount, setLineCount] = useState(0);
+  const [isWhite, setIsWhite] = useState(false);
 
   useEffect(() => {
     const countWords = () => {
@@ -40,9 +41,17 @@ const TextEditor = () => {
 
   useEffect(() => {
     const savedText = localStorage.getItem('text');
-    if (savedText) {
-      setText(savedText);
-    }
+    const screenmode = JSON.parse(localStorage.getItem("screenmode"));
+    const userfontsize = localStorage.getItem("userfontsize");
+    const userfontfamily = localStorage.getItem("userfontfamily");
+
+
+
+    setText(savedText || '');
+    setFontSize(userfontsize ? parseInt(userfontsize) : 16)
+    setFont(userfontfamily || 'Arial')
+    setIsWhite(screenmode);
+
   }, []);
 
 
@@ -67,7 +76,9 @@ const TextEditor = () => {
   }
 
   const handleFontChange = (e) => {
+
     setFont(e.target.value);
+    localStorage.setItem("userfontfamily", e.target.value);
   }
 
 
@@ -82,25 +93,44 @@ const TextEditor = () => {
 
   const incrementFontSize = () => {
     setFontSize(Math.min(fontSize + 1, 24));
+    localStorage.setItem("userfontsize", Math.min(fontSize + 1, 24))
   }
   const decrementFontSize = () => {
     setFontSize(Math.max(fontSize - 1, 12));
+    localStorage.setItem("userfontsize", Math.max(fontSize - 1, 12))
   }
   const handleClear = () => {
     setText('');
   }
   return (
-    <div className="text-editor">
-      <div className="header">
+    <div className="text-editor"
+      style={{ backgroundColor: `#${isWhite ? 'd9e3ffc7' : 'dca380a8'}` }}
+    >
+      <div className="header"
+        style={{ borderBottom: `2px solid #${isWhite ? '0012ff' : 'd0a090'}` }}>
 
         <div className='actiontbtn'>
 
           <img src="../Icon-notepad.png" alt="Logo" className="logo" />
-          <Button onClick={handleCopy} tile="Copy"><ContentCopyIcon /> </Button>
-          <Button onClick={handlePaste} title="Paste"><ContentPasteIcon /> </Button>
-          <Button onClick={handleClear} title="Clear Screen"><DeleteOutlineIcon /> </Button>
-          <Button onClick={handleShare} title="Share on WhatsApp"> <WhatsAppIcon /> </Button>
-          <Button onClick={handleDownload} title="Download file"><DownloadForOfflineIcon /> </Button>
+          <Button onClick={handleCopy} tile="Copy">
+            <ContentCopyIcon />
+            <label className='hidetext' htmlFor="Copy Icon"> Copy</label>
+          </Button>
+          <Button onClick={handlePaste} title="Paste"><ContentPasteIcon />
+            <label className='hidetext' htmlFor="Paste Icon"> Paste</label>
+          </Button>
+          <Button onClick={handleClear} title="Clear Screen">
+            <DeleteOutlineIcon />
+            <label className='hidetext' htmlFor="Clear Icon"> Clear</label>
+          </Button>
+          <Button onClick={handleShare} title="Share on WhatsApp">
+            <WhatsAppIcon />
+            <label className='hidetext' htmlFor="Share Icon"> Share</label>
+          </Button>
+          <Button onClick={handleDownload} title="Download file">
+            <DownloadForOfflineIcon />
+            <label className='hidetext' htmlFor="Download Icon"> Download</label>
+          </Button>
 
         </div>
         <div className='fontaction'>
@@ -112,10 +142,14 @@ const TextEditor = () => {
             <option value="Tahoma">Tahoma</option>
             <option value="sans-serif">sans-serif</option>
             <option value="cursive">cursive</option>
+            <option value="Lato">Lato</option>
+            <option value="Montserrat">Montserrat</option>
+            <option value="Poppins">Poppins</option>
           </select>
 
           <p className='fontsizedisplay'>
-            {fontSize}
+            Font Size :
+            {` ${fontSize}`}
           </p>
           <IconButton onClick={incrementFontSize} title="incrementFontSize" aria-label="incrementFontSize">
             <ZoomInIcon fontSize="large" />
@@ -127,15 +161,28 @@ const TextEditor = () => {
 
         </div>
       </div>
-      <textarea className="notebook-page" value={text} onChange={e => {
+      <textarea className={isWhite ? 'notebook-page-white' : 'notebook-page-yellow'} value={text} onChange={e => {
         setText(e.target.value);
         localStorage.setItem('text', e.target.value);
       }} style={{ fontFamily: font, fontSize: `${fontSize}px` }} />
 
       <div className='counts'>
-        <p className="line-count">Line: {lineCount}</p>
-        <p className="word-count">Word: {wordCount} ,</p>
-        <p className="letter-count">Chars: {letterCount}</p>
+        <div>
+          <p className="line-count">Line: {lineCount}</p>
+          <p className="word-count">Word: {wordCount} ,</p>
+          <p className="letter-count">Chars: {letterCount}</p>
+        </div>
+        <FormGroup style={{ marginRight: '20px' }}>
+          <FormControlLabel control={<Switch
+            checked={isWhite}
+            onChange={e => {
+              localStorage.setItem("screenmode", JSON.stringify(!isWhite));
+              setIsWhite(!isWhite)
+            }}
+            inputProps={{ 'aria-label': 'controlled' }}
+          />} label={isWhite ? "light" : "dark"} />
+
+        </FormGroup>
       </div>
 
     </div>

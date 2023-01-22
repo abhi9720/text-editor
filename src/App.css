@@ -1,18 +1,15 @@
 * {
   font-family: 'Roboto Light', sans-serif;
-
-
 }
 
 .logo {
   width: 45px;
   height: 45px;
-  margin-right: 0px;
+  margin-right: 50px;
   margin-bottom: 10px;
 }
 
 .text-editor {
-  background-color: #f6f7fb;
   width: 100vw;
   height: 100vh;
   display: flex;
@@ -31,14 +28,11 @@ textarea {
   margin: 0;
   padding-top: 3px;
   padding-left: 50px;
-  background: #fdf8c8;
-  font-family: verdana;
-  font-family: Arial, Helvetica, Sans-serif;
-  font-size: large;
   outline: none;
   border: 0;
   resize: none;
-  color: #212529;
+  color: #081158 !important;
+  font-weight: normal;
 }
 
 
@@ -49,15 +43,25 @@ textarea:focus {
   outline: none;
 }
 
-.notebook-page {
+.notebook-page-white {
   color: black;
-  background-image: -webkit-linear-gradient(90deg, #0012ff 1px, #0012ff 1px), linear-gradient(#fff, #fff 23px, #ccd 23px, #ccd 24px, #fff 24px);
-  background-image: linear-gradient(90deg, #0012ff 1px, #0012ff 1px), linear-gradient(#fff, #fff 23px, #ccd 23px, #ccd 24px, #fff 24px);
+  background-image: -webkit-linear-gradient(90deg, #000cbf 1px, #000cbf 1px), linear-gradient(#fff, #fff 23px, #ccd 23px, #ccd 24px, #fff 24px);
+  background-image: linear-gradient(90deg, #000cbf 1px, #000cbf 1px), linear-gradient(#fff, #fff 23px, #ccd 23px, #ccd 24px, #fff 24px);
   background-size: 3px 100%, 100% 24px;
   background-position: 40px top, left 0px;
   background-repeat: no-repeat, repeat;
   line-height: 24px !important;
   background-attachment: local;
+}
+
+.notebook-page-yellow {
+  background-image: linear-gradient(90deg, #d0a090 1px, #d0a090 1px), linear-gradient(#fdf8c8, #fdf8c8 23px, #ccd 23px, #ccd 24px, #fdf8c8 24px);
+  background-size: 3px 100%, 100% 24px;
+  background-position: 40px top, left 0px;
+  background-repeat: no-repeat, repeat;
+  line-height: 24px !important;
+  background-attachment: local;
+
 }
 
 
@@ -76,7 +80,6 @@ button {
 }
 
 .fontsizedisplay {
-  border: 1px solid rgba(0, 0, 0, 0.769);
   padding: 5px 10px;
   border-radius: 3px;
   margin-right: 10px;
@@ -117,14 +120,22 @@ input[type="number"] {
   input[type="number"] {
     font-size: 12px;
     padding: 5px;
+
   }
 
-  .notebook-page {
-    background-size: 0px 100%, 100% 24px;
-    background-position: 0px top, left 0px;
-    padding-left: 10px;
+  .logo {
+    margin-right: 0px;
   }
 
+  textarea {
+    padding-left: 25px;
+  }
+
+  .notebook-page-white,
+  .notebook-page-yellow {
+    background-size: 1px 100%, 100% 24px;
+    background-position: 20px top, left 0px;
+  }
 
 }
 
@@ -135,12 +146,7 @@ input[type="number"] {
   display: flex;
   align-items: center;
   flex-wrap: wrap;
-
   width: 100%;
-
-
-
-
 }
 
 
@@ -164,12 +170,22 @@ input[type="number"] {
     justify-content: space-evenly;
   }
 
+  .header {
+    padding: 5px 5px 0px 5px;
+    box-sizing: border-box;
+  }
+
   .header select {
-    width: 100%;
+    width: fit-content;
+    padding: 7px;
   }
 
   .fontaction {
     width: 100%;
+  }
+
+  .hidetext {
+    display: none;
   }
 }
 
@@ -182,10 +198,13 @@ input[type="number"] {
 
   border-top: #ccc 1px solid;
   z-index: 1000;
-  color: #343a40 !important;
+  color: #081158 !important;
 
   background-color: #f8f9fa !important;
   padding: 5px 20px;
+  display: flex;
+  justify-content: space-between;
+
 }
 
 .counts p {
@@ -198,4 +217,8 @@ input[type="number"] {
 .actiontbtn {
   display: flex;
   justify-content: flex-start;
+}
+
+.hidetext {
+  margin-left: 5px;
 }
