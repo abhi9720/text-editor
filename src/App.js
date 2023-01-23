@@ -81,12 +81,12 @@ const TextEditor = () => {
 
 
     const savedPreviousStates = JSON.parse(localStorage.getItem('previousStates'));
-    if (savedPreviousStates.length > 0) {
+    if (savedPreviousStates && savedPreviousStates.length > 0) {
       setPreviousStates(savedPreviousStates);
     }
 
     const savedFutureStates = JSON.parse(localStorage.getItem('futureStates'));
-    if (savedFutureStates.length > 0) {
+    if (savedFutureStates && savedFutureStates.length > 0) {
       setFutureStates(savedFutureStates, savedFutureStates);
     }
     console.log(savedPreviousStates, savedFutureStates);
