@@ -32,7 +32,8 @@ const TextEditor = () => {
   const [isWhite, setIsWhite] = useState(false);
   const [togglenav, setToggleNav] = useState(false);
   const fileInputRef = useRef(null);
-
+  const textAreaRef = useRef();
+  const printRef = useRef(null);
   const [textColor, setTextColor] = useState('#081158');
 
   const handleColorSelection = color => {
@@ -40,7 +41,7 @@ const TextEditor = () => {
   };
 
 
-  const printRef = useRef(null);
+
   useEffect(() => {
     const countWords = () => {
       let words = text.trim().split(/\s+/);
@@ -89,7 +90,7 @@ const TextEditor = () => {
     if (savedFutureStates && savedFutureStates.length > 0) {
       setFutureStates(savedFutureStates, savedFutureStates);
     }
-    console.log(savedPreviousStates, savedFutureStates);
+
 
   }, []);
 
@@ -115,13 +116,26 @@ const TextEditor = () => {
     element.click();
   }
 
-  const handleCopy = () => {
-    navigator.clipboard.writeText(text);
+  const handleCopy = async e => {
+    try {
+      const selectedText = text.substring(textAreaRef.current.selectionStart, textAreaRef.current.selectionEnd);
+      await navigator.clipboard.writeText(selectedText || text);
+    } catch (err) {
+      console.error('Failed to copy text: ', err);
+    }
   }
 
-  const handlePaste = async () => {
-    const clipboardText = await navigator.clipboard.readText();
-    setText(clipboardText);
+  const handlePaste = async e => {
+    try {
+      const clipboardText = await navigator.clipboard.readText();
+      const cursorPos = textAreaRef.current.selectionStart;
+      const updatedText = text.slice(0, cursorPos) + clipboardText + text.slice(cursorPos);
+      setPreviousStates([...previousStates, text]);
+      setText(updatedText);
+      setFutureStates([]);
+    } catch (err) {
+      console.error('Failed to paste text: ', err);
+    }
   }
 
   const handleFontChange = (e) => {
@@ -290,7 +304,12 @@ const TextEditor = () => {
           </div>}
 
       </div>
-      <textarea id="notepadtextbox" className={isWhite ? 'notebook-page-white' : 'notebook-page-yellow'} value={text} onChange={handleChange}
+      <textarea id="notepadtextbox"
+        className={isWhite ? 'notebook-page-white' : 'notebook-page-yellow'}
+        value={text}
+        onChange={handleChange}
+        ref={textAreaRef}
+        onPaste={handlePaste}
         style={{ fontFamily: font, fontSize: `${fontSize}px`, color: textColor }} />
 
       <div ref={printRef} className="print-only" style={{ display: 'none' }}>
@@ -323,7 +342,7 @@ const TextEditor = () => {
             localStorage.setItem("screenmode", JSON.stringify(!isWhite));
             setIsWhite(!isWhite)
           }}
-          inputProps={{ 'aria-label': 'controlled' }}
+
           label={isWhite ? "light" : "dark"}
         />
       </div>
