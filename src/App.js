@@ -24,7 +24,7 @@ const TextEditor = () => {
 
   const [previousStates, setPreviousStates] = useState([]);
   const [futureStates, setFutureStates] = useState([]);
-  const [font, setFont] = useState('Arial');
+  const [font, setFont] = useState('cursive');
   const [fontSize, setFontSize] = useState(16);
   const [wordCount, setWordCount] = useState(0);
   const [letterCount, setLetterCount] = useState(0);
@@ -34,10 +34,12 @@ const TextEditor = () => {
   const fileInputRef = useRef(null);
   const textAreaRef = useRef();
   const printRef = useRef(null);
-  const [textColor, setTextColor] = useState('#081158');
+  const [textColor, setTextColor] = useState('#022b3a');
 
   const handleColorSelection = color => {
+
     setTextColor(color);
+    localStorage.setItem("textColor", color)
   };
 
 
@@ -67,9 +69,11 @@ const TextEditor = () => {
     const screenmode = JSON.parse(localStorage.getItem("screenmode"));
     const userfontsize = localStorage.getItem("userfontsize");
     const userfontfamily = localStorage.getItem("userfontfamily");
+    const textColor = localStorage.getItem("textColor")
 
+    setTextColor(textColor || '#022b3a')
     setFontSize(userfontsize ? parseInt(userfontsize) : 16)
-    setFont(userfontfamily || 'Arial')
+    setFont(userfontfamily || 'cursive')
     setIsWhite(screenmode);
 
   }, []);
