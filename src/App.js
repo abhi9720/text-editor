@@ -143,26 +143,29 @@ const TextEditor = () => {
         <div className='actiontbtn'>
           <IconButton onClick={handleCopy} tile="Copy">
             <ContentCopyIcon />
+            <span className={togglenav ? "btntexthide" : "btntext"}>Copy</span>
 
           </IconButton>
-          <IconButton onClick={handlePaste} title="Paste"><ContentPasteIcon />
-
+          <IconButton onClick={handlePaste} title="Paste">
+            <ContentPasteIcon />
+            <span className={togglenav ? "btntexthide" : "btntext"}>Paste </span>
           </IconButton>
           <IconButton onClick={handleClear} title="Clear Screen">
             <DeleteOutlineIcon />
+            <span className={togglenav ? "btntexthide" : "btntext"}>Clear </span>
 
           </IconButton>
           <IconButton onClick={handleShare} title="Share on WhatsApp">
             <WhatsAppIcon />
-
+            <span className={togglenav ? "btntexthide" : "btntext"}>Share </span>
           </IconButton>
           <IconButton onClick={handleDownload} title="Save file">
             <SaveIcon />
-
+            <span className={togglenav ? "btntexthide" : "btntext"}> Save</span>
           </IconButton>
           <IconButton onClick={() => fileInputRef.current.click()} title="Upload File">
             <CloudUploadIcon />
-
+            <span className={togglenav ? "btntexthide" : "btntext"}>Upload File </span>
           </IconButton>
 
           <input type="file" ref={fileInputRef} style={{ display: 'none' }} onChange={handleFileInput} />
@@ -175,44 +178,47 @@ const TextEditor = () => {
 
 
         </div>
-        {togglenav ? <></> : <div className='fontaction'>
-          <IconButton onClick={handlePrint}>
-            <LocalPrintshopIcon></LocalPrintshopIcon>
-          </IconButton>
+        {togglenav ?
+          <></> :
+          <div className='fontaction'>
+            <IconButton onClick={handlePrint}>
+              <LocalPrintshopIcon></LocalPrintshopIcon>
+              <span className={togglenav ? "btntexthide" : "btntext"}>Print </span>
+            </IconButton>
 
-          <IconButton onClick={incrementFontSize} title="incrementFontSize" aria-label="incrementFontSize">
-            <ZoomInIcon fontSize="large" />
-          </IconButton>
+            <IconButton onClick={incrementFontSize} title="incrementFontSize" aria-label="incrementFontSize">
+              <ZoomInIcon fontSize="large" />
+            </IconButton>
 
-          <IconButton onClick={decrementFontSize} title="decrementFontSize" aria-label="decrementFontSize" >
-            <ZoomOutIcon fontSize="large" />
-          </IconButton>
-          <p className='fontsizedisplay' title='font-size'>
+            <IconButton onClick={decrementFontSize} title="decrementFontSize" aria-label="decrementFontSize" >
+              <ZoomOutIcon fontSize="large" />
+            </IconButton>
+            <p className='fontsizedisplay' title='font-size'>
 
-            <span className='hidetext'> Font Size</span>
-            {` ${fontSize}`}
-          </p>
+              <span className='hidetext'> Font Size</span>
+              {` ${fontSize}`}
+            </p>
 
-          <select value={font} onChange={handleFontChange}>
-            <option value="Arial">Arial</option>
-            <option value="Helvetica">Helvetica</option>
-            <option value="Verdana">Verdana</option>
-            <option value="Tahoma">Tahoma</option>
-            <option value="sans-serif">sans-serif</option>
-            <option value="cursive">cursive</option>
-            <option value="Lato">Lato</option>
-            <option value="Montserrat">Montserrat</option>
-            <option value="Poppins">Poppins</option>
-          </select>
-
-
-
-          <IconButton className='showonsmall' onClick={e => setToggleNav(!togglenav)}>
-            <KeyboardArrowUpIcon className='showonsmall' />
-          </IconButton>
+            <select value={font} onChange={handleFontChange}>
+              <option value="Arial">Arial</option>
+              <option value="Helvetica">Helvetica</option>
+              <option value="Verdana">Verdana</option>
+              <option value="Tahoma">Tahoma</option>
+              <option value="sans-serif">sans-serif</option>
+              <option value="cursive">cursive</option>
+              <option value="Lato">Lato</option>
+              <option value="Montserrat">Montserrat</option>
+              <option value="Poppins">Poppins</option>
+            </select>
 
 
-        </div>}
+
+            <IconButton className='showonsmall' onClick={e => setToggleNav(!togglenav)}>
+              <KeyboardArrowUpIcon className='showonsmall' />
+            </IconButton>
+
+
+          </div>}
 
       </div>
       <textarea id="notepadtextbox" className={isWhite ? 'notebook-page-white' : 'notebook-page-yellow'} value={text} onChange={e => {
