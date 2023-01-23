@@ -11,12 +11,19 @@ import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
 import ContentCopyIcon from '@mui/icons-material/ContentCopy';
 import CloudUploadIcon from '@mui/icons-material/CloudUpload';
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
-import { FormControlLabel, FormGroup, Switch } from '@mui/material';
+import { Switch } from '@mui/material';
 import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
 import LocalPrintshopIcon from '@mui/icons-material/LocalPrintshop';
+import UndoIcon from '@mui/icons-material/Undo';
+import RedoIcon from '@mui/icons-material/Redo';
+
 
 const TextEditor = () => {
   const [text, setText] = useState('');
+
+
+  const [previousStates, setPreviousStates] = useState([]);
+  const [futureStates, setFutureStates] = useState([]);
   const [font, setFont] = useState('Arial');
   const [fontSize, setFontSize] = useState(16);
   const [wordCount, setWordCount] = useState(0);
@@ -25,6 +32,13 @@ const TextEditor = () => {
   const [isWhite, setIsWhite] = useState(false);
   const [togglenav, setToggleNav] = useState(false);
   const fileInputRef = useRef(null);
+
+  const [textColor, setTextColor] = useState('#081158');
+
+  const handleColorSelection = color => {
+    setTextColor(color);
+  };
+
 
   const printRef = useRef(null);
   useEffect(() => {
@@ -40,7 +54,7 @@ const TextEditor = () => {
       const lines = text.split('\n').length;
       setLineCount(lines);
     }
-
+    // localStorage.setItem('text', text);
     countWords();
     countLetters();
     lineCount();
@@ -48,23 +62,48 @@ const TextEditor = () => {
 
 
   useEffect(() => {
-    const savedText = localStorage.getItem('text');
+
     const screenmode = JSON.parse(localStorage.getItem("screenmode"));
     const userfontsize = localStorage.getItem("userfontsize");
     const userfontfamily = localStorage.getItem("userfontfamily");
 
-
-
-    setText(savedText || '');
     setFontSize(userfontsize ? parseInt(userfontsize) : 16)
     setFont(userfontfamily || 'Arial')
     setIsWhite(screenmode);
 
   }, []);
 
-  window.addEventListener('file', (event) => {
-    console.log(event)
-  });
+  useEffect(() => {
+    const savedText = localStorage.getItem('text');
+    if (savedText) {
+      setText(savedText);
+    }
+
+
+    const savedPreviousStates = JSON.parse(localStorage.getItem('previousStates'));
+    if (savedPreviousStates.length > 0) {
+      setPreviousStates(savedPreviousStates);
+    }
+
+    const savedFutureStates = JSON.parse(localStorage.getItem('futureStates'));
+    if (savedFutureStates.length > 0) {
+      setFutureStates(savedFutureStates, savedFutureStates);
+    }
+    console.log(savedPreviousStates, savedFutureStates);
+
+  }, []);
+
+  useEffect(() => {
+    localStorage.setItem('text', text);
+    localStorage.setItem('previousStates', JSON.stringify(previousStates));
+    localStorage.setItem('futureStates', JSON.stringify(futureStates));
+  }, [text, previousStates, futureStates]);
+
+
+
+
+
+
 
 
   const handleDownload = () => {
@@ -133,6 +172,30 @@ const TextEditor = () => {
   }
 
 
+
+  const handleChange = e => {
+    setPreviousStates([...previousStates, text]);
+    setText(e.target.value);
+    setFutureStates([]);
+  };
+
+  const handleUndo = () => {
+    if (previousStates.length > 0) {
+      setFutureStates([text, ...futureStates]);
+      setText(previousStates[previousStates.length - 1]);
+      setPreviousStates(previousStates.slice(0, -1));
+    }
+  };
+
+  const handleRedo = () => {
+    if (futureStates.length > 0) {
+      setPreviousStates([...previousStates, text]);
+      setText(futureStates[0]);
+      setFutureStates(futureStates.slice(1));
+    }
+  };
+
+
   return (
     <div className="text-editor"
       style={{ backgroundColor: `#${isWhite ? 'd9e3ffc7' : 'ff86005a'}` }}
@@ -144,7 +207,6 @@ const TextEditor = () => {
           <IconButton onClick={handleCopy} tile="Copy">
             <ContentCopyIcon />
             <span className={togglenav ? "btntexthide" : "btntext"}>Copy</span>
-
           </IconButton>
           <IconButton onClick={handlePaste} title="Paste">
             <ContentPasteIcon />
@@ -153,12 +215,16 @@ const TextEditor = () => {
           <IconButton onClick={handleClear} title="Clear Screen">
             <DeleteOutlineIcon />
             <span className={togglenav ? "btntexthide" : "btntext"}>Clear </span>
+          </IconButton>
+          <IconButton onClick={handleUndo} title="Undo" disabled={previousStates.length === 0}>
+            <UndoIcon />
+            <span className={togglenav ? "btntexthide" : "btntext"}> Undo</span>
+          </IconButton>
+          <IconButton onClick={handleRedo} title="Redo" disabled={futureStates.length === 0}>
+            <RedoIcon />
+            <span className={togglenav ? "btntexthide" : "btntext"}> Redo</span>
+          </IconButton>
 
-          </IconButton>
-          <IconButton onClick={handleShare} title="Share on WhatsApp">
-            <WhatsAppIcon />
-            <span className={togglenav ? "btntexthide" : "btntext"}>Share </span>
-          </IconButton>
           <IconButton onClick={handleDownload} title="Save file">
             <SaveIcon />
             <span className={togglenav ? "btntexthide" : "btntext"}> Save</span>
@@ -185,7 +251,10 @@ const TextEditor = () => {
               <LocalPrintshopIcon></LocalPrintshopIcon>
               <span className={togglenav ? "btntexthide" : "btntext"}>Print </span>
             </IconButton>
-
+            <IconButton onClick={handleShare} title="Share on WhatsApp">
+              <WhatsAppIcon />
+              <span className={togglenav ? "btntexthide" : "btntext"}>Share </span>
+            </IconButton>
             <IconButton onClick={incrementFontSize} title="incrementFontSize" aria-label="incrementFontSize">
               <ZoomInIcon fontSize="large" />
             </IconButton>
@@ -221,11 +290,8 @@ const TextEditor = () => {
           </div>}
 
       </div>
-      <textarea id="notepadtextbox" className={isWhite ? 'notebook-page-white' : 'notebook-page-yellow'} value={text} onChange={e => {
-        setText(e.target.value);
-        localStorage.setItem('text', e.target.value);
-      }} style={{ fontFamily: font, fontSize: `${fontSize}px` }} />
-
+      <textarea id="notepadtextbox" className={isWhite ? 'notebook-page-white' : 'notebook-page-yellow'} value={text} onChange={handleChange}
+        style={{ fontFamily: font, fontSize: `${fontSize}px`, color: textColor }} />
 
       <div ref={printRef} className="print-only" style={{ display: 'none' }}>
       </div>
@@ -235,19 +301,31 @@ const TextEditor = () => {
           <p className="line-count">Line  {lineCount} </p>
           <p className="word-count">Word: {wordCount} </p>
           <p className="letter-count">Chars: {letterCount}</p>
+        </div>
+        <div className="colotPickerdiv">
+
+
+          <input type="color" id="colorpicker" name="colorpicker"
+            value={textColor}
+            onChange={(e) => handleColorSelection(e.target.value)}
+          />
+          <label
+            style={{ backgroundColor: textColor }}
+            className='colorpickertxt' htmlFor="colorpicker"></label>
+
 
         </div>
-        <FormGroup >
-          <FormControlLabel control={<Switch
-            checked={isWhite}
-            onChange={e => {
-              localStorage.setItem("screenmode", JSON.stringify(!isWhite));
-              setIsWhite(!isWhite)
-            }}
-            inputProps={{ 'aria-label': 'controlled' }}
-          />} label={isWhite ? "light" : "dark"} />
 
-        </FormGroup>
+
+        <Switch
+          checked={isWhite}
+          onChange={e => {
+            localStorage.setItem("screenmode", JSON.stringify(!isWhite));
+            setIsWhite(!isWhite)
+          }}
+          inputProps={{ 'aria-label': 'controlled' }}
+          label={isWhite ? "light" : "dark"}
+        />
       </div>
 
     </div>
