@@ -21,7 +21,7 @@ import RedoIcon from '@mui/icons-material/Redo';
 const TextEditor = () => {
   const [text, setText] = useState('');
 
-
+  const [height, setHeight] = useState(0)
   const [previousStates, setPreviousStates] = useState([]);
   const [futureStates, setFutureStates] = useState([]);
   const [font, setFont] = useState('cursive');
@@ -33,7 +33,6 @@ const TextEditor = () => {
   const [togglenav, setToggleNav] = useState(false);
   const fileInputRef = useRef(null);
   const textAreaRef = useRef();
-  const printRef = useRef(null);
   const [textColor, setTextColor] = useState('#022b3a');
 
   const handleColorSelection = color => {
@@ -61,7 +60,9 @@ const TextEditor = () => {
     countWords();
     countLetters();
     lineCount();
+    setHeight(textAreaRef.current.scrollHeight)
   }, [text]);
+
 
 
   useEffect(() => {
@@ -185,8 +186,12 @@ const TextEditor = () => {
   }
 
   const handlePrint = () => {
-    printRef.current.innerHTML = text;
+
+
     window.print();
+
+
+
   }
 
 
@@ -213,6 +218,19 @@ const TextEditor = () => {
     }
   };
 
+
+
+  const printStyles = `
+    @media print {
+      #notepadtextbox {
+        page-break-before: always;
+        white-space: pre-wrap;
+        min-height: ${height + 20}px !important;
+        height: fit-content !important;
+      }
+    
+    }
+  `;
 
   return (
     <div className="text-editor"
@@ -308,7 +326,10 @@ const TextEditor = () => {
           </div>}
 
       </div>
-      <textarea id="notepadtextbox"
+      <style dangerouslySetInnerHTML={{ __html: printStyles }} />
+      <textarea
+
+        id="notepadtextbox"
         className={isWhite ? 'notebook-page-white' : 'notebook-page-yellow'}
         value={text}
         onChange={handleChange}
@@ -316,8 +337,8 @@ const TextEditor = () => {
         onPaste={handlePaste}
         style={{ fontFamily: font, fontSize: `${fontSize}px`, color: textColor }} />
 
-      <div ref={printRef} className="print-only" style={{ display: 'none' }}>
-      </div>
+
+
       <div className='counts'>
 
         <div>
